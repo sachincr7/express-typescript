@@ -4,7 +4,7 @@ import moment from 'moment';
 import jwt from 'jsonwebtoken';
 
 class TokenService {
-  async generateToken(user: User) {
+  async generateAccessToken(user: User) {
     const payload = {
       sub: user.id,
       iat: moment().unix(),

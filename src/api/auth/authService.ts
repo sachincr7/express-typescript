@@ -1,5 +1,4 @@
 import { StatusCodes } from 'http-status-codes';
-
 import type { User, NewUser } from '@/drizzle/schema';
 import { UserRepository } from '@/api/user/userRepository';
 import { ServiceResponse } from '@/common/models/serviceResponse';
@@ -54,7 +53,7 @@ export class AuthService {
 
       const user = await this.userRepository.createAsync(userData);
 
-      const authToken = await tokenService.generateToken(user);
+      const authToken = await tokenService.generateAccessToken(user);
       const data = {
         user: filterUserResponse(user),
         token: authToken,
@@ -84,7 +83,7 @@ export class AuthService {
    * @returns Promise<ServiceResponse<{email: string, password: string} | null>>
    */
   async loginUser(loginData: User) {
-    const authToken = await tokenService.generateToken(loginData);
+    const authToken = await tokenService.generateAccessToken(loginData);
     const data = {
       user: filterUserResponse(loginData),
       token: authToken,
