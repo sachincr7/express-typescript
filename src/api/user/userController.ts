@@ -9,7 +9,7 @@ class UserController {
    * @param req - Request object
    * @param res - Response object
    */
-  public getUser: RequestHandler = async (req: Request, res: Response) => {
+  public getUserById: RequestHandler = async (req: Request, res: Response) => {
     const user = req.user as User;
     const serviceResponse = await userService.findById(user.id);
     res.status(serviceResponse.statusCode).send(serviceResponse);
@@ -40,8 +40,8 @@ class UserController {
     req: Request,
     res: Response
   ) => {
-    const { email } = req.params;
-    const serviceResponse = await userService.findByEmail(email);
+    const user = req.user as User;
+    const serviceResponse = await userService.findByEmail(user.email);
     res.status(serviceResponse.statusCode).send(serviceResponse);
   };
 
@@ -51,8 +51,8 @@ class UserController {
    * @param res - Response object
    */
   public updateUser: RequestHandler = async (req: Request, res: Response) => {
-    const id = Number.parseInt(req.params.id as string, 10);
-    const serviceResponse = await userService.updateUser(id, req.body);
+    const user = req.user as User;
+    const serviceResponse = await userService.updateUser(user.id, req.body);
     res.status(serviceResponse.statusCode).send(serviceResponse);
   };
 
@@ -62,8 +62,8 @@ class UserController {
    * @param res - Response object
    */
   public deleteUser: RequestHandler = async (req: Request, res: Response) => {
-    const id = Number.parseInt(req.params.id as string, 10);
-    const serviceResponse = await userService.deleteUser(id);
+    const user = req.user as User;
+    const serviceResponse = await userService.deleteUser(user.id);
     res.status(serviceResponse.statusCode).send(serviceResponse);
   };
 }

@@ -13,7 +13,7 @@ export const userRouter: Router = express.Router();
  * @param {number} id - The unique identifier of the user
  * @returns {User} The user object if found
  */
-userRouter.get('/details', authenticateJWT, userController.getUser);
+userRouter.get('/details', authenticateJWT, userController.getUserById);
 
 /**
  * PUT /user/users/:id
