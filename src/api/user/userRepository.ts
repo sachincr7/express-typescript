@@ -1,30 +1,68 @@
-import type { User } from "@/api/user/userModel";
-
-export const users: User[] = [
-	{
-		id: 1,
-		name: "Alice",
-		email: "alice@example.com",
-		age: 42,
-		createdAt: new Date(),
-		updatedAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days later
-	},
-	{
-		id: 2,
-		name: "Robert",
-		email: "Robert@example.com",
-		age: 21,
-		createdAt: new Date(),
-		updatedAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days later
-	},
-];
+import { eq } from 'drizzle-orm';
+import db from '@/drizzle/index';
+import { usersTable, type User, type NewUser } from '@/drizzle/schema';
 
 export class UserRepository {
-	async findAllAsync(): Promise<User[]> {
-		return users;
-	}
+  /**
+   * Retrieves all users from the database
+   */
+  async findAllAsync(): Promise<User[]> {
+    return await db.select().from(usersTable);
+  }
 
-	async findByIdAsync(id: number): Promise<User | null> {
-		return users.find((user) => user.id === id) || null;
-	}
+  /**
+   * Retrieves a user by their ID
+   */
+  async findByIdAsync(id: number): Promise<User | null> {
+    const result = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, id));
+    return result[0] || null;
+  }
+
+  /**
+   * Creates a new user in the database
+   */
+  async createAsync(userData: NewUser): Promise<User> {
+    const result = await db.insert(usersTable).values(userData).returning();
+    return result[0];
+  }
+
+  /**
+   * Updates an existing user in the database
+   */
+  async updateAsync(
+    id: number,
+    userData: Partial<NewUser>
+  ): Promise<User | null> {
+    const result = await db
+      .update(usersTable)
+      .set({ ...userData, updated_at: new Date() })
+      .where(eq(usersTable.id, id))
+      .returning();
+    return result[0] || null;
+  }
+
+  /**
+   * Deletes a user from the database
+   */
+  async deleteAsync(id: number): Promise<boolean> {
+    const result = await db
+      .delete(usersTable)
+      .where(eq(usersTable.id, id))
+      .returning();
+    return result.length > 0;
+  }
+
+  /**
+   * Finds a user by email address
+   */
+  async findByEmailAsync(email: string): Promise<User | null> {
+    const result = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, email));
+    return result[0] || null;
+  }
 }
