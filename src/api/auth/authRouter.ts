@@ -54,6 +54,7 @@ authRouter.get('/users', authController.getUsers);
 authRouter.get(
   '/users/:id',
   validateRequest(GetUserSchema),
+  passport.authenticate('jwt', { session: false }),
   authController.getUserById
 );
 

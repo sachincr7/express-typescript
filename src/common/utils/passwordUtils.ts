@@ -1,3 +1,4 @@
+import { User } from '@/drizzle/schema';
 import bcrypt from 'bcryptjs';
 
 /**
@@ -16,4 +17,14 @@ export const comparePassword = async (
   hashedPassword: string
 ): Promise<boolean> => {
   return await bcrypt.compare(password, hashedPassword);
+};
+
+/**
+ *
+ * @param user
+ * @returns
+ */
+export const filterUserResponse = (user: User): Omit<User, 'password'> => {
+  const { password, ...userResponse } = user;
+  return userResponse;
 };

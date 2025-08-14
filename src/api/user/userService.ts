@@ -5,6 +5,7 @@ import { UserRepository } from '@/api/user/userRepository';
 import { ServiceResponse } from '@/common/models/serviceResponse';
 import { logger } from '@/server';
 import { NewUser } from '@/drizzle/schema';
+import { filterUserResponse } from '@/common/utils/passwordUtils';
 
 export class UserService {
   private userRepository: UserRepository;
@@ -50,14 +51,6 @@ export class UserService {
       // For now, return all users. In a real app, you'd implement pagination
       const users = await this.userRepository.findAllAsync();
 
-      if (!users || users.length === 0) {
-        return ServiceResponse.failure(
-          'No users found',
-          null,
-          StatusCodes.NOT_FOUND
-        );
-      }
-
       return ServiceResponse.success('Users retrieved successfully', users);
     } catch (ex) {
       const errorMessage = `Error querying users: ${(ex as Error).message}`;
@@ -71,7 +64,7 @@ export class UserService {
   }
 
   // Retrieves all users from the database
-  async findAll(): Promise<ServiceResponse<User[] | null>> {
+  async findAll() {
     try {
       const users = await this.userRepository.findAllAsync();
       if (!users || users.length === 0) {
@@ -81,7 +74,10 @@ export class UserService {
           StatusCodes.NOT_FOUND
         );
       }
-      return ServiceResponse.success<User[]>('Users found', users);
+
+      const filteredUsers = users.map((user) => filterUserResponse(user));
+
+      return ServiceResponse.success('Users found', filteredUsers);
     } catch (ex) {
       const errorMessage = `Error finding all users: $${(ex as Error).message}`;
       logger.error(errorMessage);
@@ -94,7 +90,7 @@ export class UserService {
   }
 
   // Retrieves a single user by their ID
-  async findById(id: number): Promise<ServiceResponse<User | null>> {
+  async findById(id: number) {
     try {
       const user = await this.userRepository.findByIdAsync(id);
       if (!user) {
@@ -104,7 +100,7 @@ export class UserService {
           StatusCodes.NOT_FOUND
         );
       }
-      return ServiceResponse.success<User>('User found', user);
+      return ServiceResponse.success('User found', filterUserResponse(user));
     } catch (ex) {
       const errorMessage = `Error finding user with id ${id}:, ${
         (ex as Error).message
@@ -123,7 +119,7 @@ export class UserService {
    * @param email - User email
    * @returns Promise<ServiceResponse<User | null>>
    */
-  async findByEmail(email: string): Promise<ServiceResponse<User | null>> {
+  async findByEmail(email: string) {
     try {
       const user = await this.userRepository.findByEmailAsync(email);
       if (!user) {
@@ -133,7 +129,7 @@ export class UserService {
           StatusCodes.NOT_FOUND
         );
       }
-      return ServiceResponse.success<User>('User found', user);
+      return ServiceResponse.success('User found', user);
     } catch (ex) {
       const errorMessage = `Error finding user with email ${email}: ${
         (ex as Error).message
@@ -156,7 +152,7 @@ export class UserService {
   async updateUser(
     id: number,
     updateBody: Partial<Omit<NewUser, 'id' | 'createdAt' | 'updatedAt'>>
-  ): Promise<ServiceResponse<User | null>> {
+  ) {
     try {
       const user = await this.userRepository.updateAsync(id, updateBody);
       if (!user) {
@@ -166,7 +162,7 @@ export class UserService {
           StatusCodes.NOT_FOUND
         );
       }
-      return ServiceResponse.success<User>('User updated', user);
+      return ServiceResponse.success('User updated', filterUserResponse(user));
     } catch (ex) {
       const errorMessage = `Error updating user with id ${id}: ${
         (ex as Error).message

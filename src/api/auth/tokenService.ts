@@ -9,6 +9,7 @@ class TokenService {
       sub: user.id,
       iat: moment().unix(),
       email: user.email,
+      role: user.role,
     };
     return jwt.sign(payload, env.JWT_SECRET);
   }

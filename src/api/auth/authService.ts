@@ -4,10 +4,8 @@ import type { User, NewUser } from '@/drizzle/schema';
 import { UserRepository } from '@/api/user/userRepository';
 import { ServiceResponse } from '@/common/models/serviceResponse';
 import { logger } from '@/server';
-import { userService } from '@/api/user/userService';
-import { comparePassword, hashPassword } from '@/common/utils/passwordUtils';
-import { generateAccessToken } from '@/common/utils/jwtUtils';
-import { env } from '@/common/utils/envConfig';
+import { filterUserResponse, hashPassword } from '@/common/utils/passwordUtils';
+import { tokenService } from './tokenService';
 
 export class AuthService {
   private userRepository: UserRepository;
@@ -48,12 +46,15 @@ export class AuthService {
 
       const user = await this.userRepository.createAsync(userData);
 
-      // Prepare response (exclude password)
-      const { password, ...userResponse } = user;
+      const authToken = await tokenService.generateToken(user);
+      const data = {
+        user: filterUserResponse(user),
+        token: authToken,
+      };
 
       return ServiceResponse.success(
         'User registered successfully',
-        userResponse,
+        data,
         StatusCodes.CREATED
       );
     } catch (error) {
