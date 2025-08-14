@@ -9,7 +9,13 @@ import {
   GetSessionsByShopSchema,
 } from './shopifyModel';
 import { validateRequest } from '@/common/utils/httpHandlers';
-import { shopifyController } from './shopifyController';
+import {
+  shopifyInitController,
+  shopifyRedirectController,
+  shopifyTokensController,
+  shopifyCallbackController,
+  shopifySessionController,
+} from './controllers';
 
 export const shopifyRouter: Router = express.Router();
 
@@ -18,7 +24,7 @@ export const shopifyRouter: Router = express.Router();
  * @summary Initiate Shopify OAuth process
  * @description Redirects to Shopify OAuth authorization URL
  */
-shopifyRouter.get('/', shopifyController.shopifyInit);
+shopifyRouter.get('/', shopifyInitController.shopifyInit);
 
 /**
  * GET /shopify/auth
@@ -28,7 +34,7 @@ shopifyRouter.get('/', shopifyController.shopifyInit);
 shopifyRouter.get(
   '/auth',
   validateRequest(ShopifyAuthRedirectSchema),
-  shopifyController.authRedirect
+  shopifyRedirectController.authRedirect
 );
 
 /**
@@ -36,11 +42,7 @@ shopifyRouter.get(
  * @summary Handle Shopify OAuth callback
  * @description Exchanges authorization code for access token and stores session
  */
-shopifyRouter.get(
-  '/auth/tokens',
-  validateRequest(ShopifyAuthCallbackSchema),
-  shopifyController.authTokens
-);
+shopifyRouter.get('/auth/tokens', shopifyTokensController.authTokens);
 
 /**
  * GET /shopify/auth/callback
@@ -50,7 +52,7 @@ shopifyRouter.get(
 shopifyRouter.get(
   '/auth/callback',
   validateRequest(ShopifyAuthCallbackSchema),
-  shopifyController.handleCallback
+  shopifyCallbackController.handleCallback
 );
 
 /**
@@ -61,7 +63,7 @@ shopifyRouter.get(
 shopifyRouter.get(
   '/sessions/:sessionId',
   validateRequest(GetShopifySessionSchema),
-  shopifyController.getSession
+  shopifySessionController.getSession
 );
 
 /**
@@ -72,7 +74,7 @@ shopifyRouter.get(
 shopifyRouter.get(
   '/sessions/shop/:shop',
   validateRequest(GetSessionsByShopSchema),
-  shopifyController.getSessionsByShop
+  shopifySessionController.getSessionsByShop
 );
 
 /**
@@ -83,7 +85,7 @@ shopifyRouter.get(
 shopifyRouter.post(
   '/sessions',
   validateRequest(CreateShopifySessionSchema),
-  shopifyController.updateSession
+  shopifySessionController.createSession
 );
 
 /**
@@ -94,7 +96,7 @@ shopifyRouter.post(
 shopifyRouter.put(
   '/sessions/:sessionId',
   validateRequest(UpdateShopifySessionSchema),
-  shopifyController.updateSession
+  shopifySessionController.updateSession
 );
 
 /**
@@ -105,7 +107,7 @@ shopifyRouter.put(
 shopifyRouter.delete(
   '/sessions/:sessionId',
   validateRequest(GetShopifySessionSchema),
-  shopifyController.deleteSession
+  shopifySessionController.deleteSession
 );
 
 /**
@@ -116,7 +118,7 @@ shopifyRouter.delete(
 shopifyRouter.delete(
   '/sessions/shop/:shop',
   validateRequest(GetSessionsByShopSchema),
-  shopifyController.deleteSessionsByShop
+  shopifySessionController.deleteSessionsByShop
 );
 
 /**
@@ -127,5 +129,5 @@ shopifyRouter.delete(
 shopifyRouter.get(
   '/sessions/:sessionId/exists',
   validateRequest(GetShopifySessionSchema),
-  shopifyController.checkSession
+  shopifySessionController.checkSession
 );
