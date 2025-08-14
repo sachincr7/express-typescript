@@ -28,11 +28,11 @@ const jwtVerify = async (
     const userService = new UserService();
     const userResponse = await userService.findById(Number(payload.sub));
 
-    if (!userResponse.success || !userResponse.responseObject) {
+    if (!userResponse.success || !userResponse.data) {
       return done(null, false);
     }
 
-    done(null, userResponse.responseObject);
+    done(null, userResponse.data);
   } catch (error) {
     done(error, false);
   }

@@ -32,10 +32,7 @@ export class AuthService {
       }
 
       const newUser = await userService.createUser(userBody);
-      return ServiceResponse.success(
-        'User created successfully',
-        newUser.responseObject
-      );
+      return ServiceResponse.success('User created successfully', newUser.data);
     } catch (error) {
       const errorMessage = `Error registering user: ${
         (error as Error).message

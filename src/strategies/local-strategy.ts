@@ -1,7 +1,6 @@
 import { Strategy as LocalStrategy } from 'passport-local';
 import passport from 'passport';
 import { userService } from '@/api/user/userService';
-import { logger } from '@/server';
 
 export default passport.use(
   new LocalStrategy(
@@ -19,13 +18,13 @@ export default passport.use(
           });
         }
 
-        if (finduser.responseObject?.password !== password) {
+        if (finduser.data?.password !== password) {
           return done(null, false, {
             message: 'Invalid password',
           });
         }
 
-        done(null, finduser.responseObject);
+        done(null, finduser.data);
       } catch (error) {
         done(error);
       }
