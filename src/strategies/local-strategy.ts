@@ -1,6 +1,8 @@
 import { Strategy as LocalStrategy } from 'passport-local';
 import passport from 'passport';
 import { userService } from '@/api/user/userService';
+import { comparePassword } from '@/common/utils/passwordUtils';
+import { User } from '@/drizzle/schema';
 
 export default passport.use(
   new LocalStrategy(
@@ -18,13 +20,17 @@ export default passport.use(
           });
         }
 
-        if (finduser.data?.password !== password) {
-          return done(null, false, {
+        const isPasswordValid = await comparePassword(
+          password,
+          finduser.data?.password || ''
+        );
+        if (!isPasswordValid) {
+          done(null, false, {
             message: 'Invalid password',
           });
         }
 
-        done(null, finduser.data);
+        done(null, finduser.data as User);
       } catch (error) {
         done(error);
       }

@@ -5,6 +5,9 @@ import { UserRepository } from '@/api/user/userRepository';
 import { ServiceResponse } from '@/common/models/serviceResponse';
 import { logger } from '@/server';
 import { userService } from '@/api/user/userService';
+import { comparePassword, hashPassword } from '@/common/utils/passwordUtils';
+import { generateAccessToken } from '@/common/utils/jwtUtils';
+import { env } from '@/common/utils/envConfig';
 
 export class AuthService {
   private userRepository: UserRepository;
@@ -19,20 +22,40 @@ export class AuthService {
    * @returns Promise<ServiceResponse<User | null>>
    */
   async registerUser(
-    userBody: Omit<NewUser, 'id' | 'createdAt' | 'updatedAt'>
+    userBody: Omit<NewUser, 'id' | 'created_at' | 'updated_at'>
   ) {
     try {
-      const user = await userService.findByEmail(userBody.email);
-      if (user.success) {
+      // Check if email is already taken
+      const existingUser = await this.userRepository.findByEmailAsync(
+        userBody.email
+      );
+      if (existingUser) {
         return ServiceResponse.failure(
-          'User already exists',
+          'Email already taken',
           null,
           StatusCodes.BAD_REQUEST
         );
       }
 
-      const newUser = await userService.createUser(userBody);
-      return ServiceResponse.success('User created successfully', newUser.data);
+      // Hash password using bcrypt
+      const hashedPassword = await hashPassword(userBody.password);
+
+      // Create user with hashed password
+      const userData = {
+        ...userBody,
+        password: hashedPassword,
+      };
+
+      const user = await this.userRepository.createAsync(userData);
+
+      // Prepare response (exclude password)
+      const { password, ...userResponse } = user;
+
+      return ServiceResponse.success(
+        'User registered successfully',
+        userResponse,
+        StatusCodes.CREATED
+      );
     } catch (error) {
       const errorMessage = `Error registering user: ${
         (error as Error).message
@@ -48,11 +71,11 @@ export class AuthService {
 
   /**
    * Login a user
-   * @param userBody - User data to login
-   * @returns Promise<ServiceResponse<User | null>>
+   * @param loginData - User login credentials
+   * @returns Promise<ServiceResponse<{email: string, password: string} | null>>
    */
-  async loginUser(userBody: { email: string; password: string }) {
-    return ServiceResponse.success('User logged in successfully', userBody);
+  async loginUser(loginData: { email: string; password: string }) {
+    return ServiceResponse.success('User logged in successfully', loginData);
   }
 
   /**
