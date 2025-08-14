@@ -92,6 +92,16 @@ export class AuthService {
   }
 
   /**
+   * Verify a token
+   * @param token - Token to verify
+   * @returns Promise<ServiceResponse<User | null>>
+   */
+  async verifyToken(token: string) {
+    const decoded = await tokenService.verifyAccessToken(token);
+    return ServiceResponse.success('Token verified successfully', decoded);
+  }
+
+  /**
    * Create a new user
    * @param userBody - User data to create
    * @returns Promise<ServiceResponse<User | null>>

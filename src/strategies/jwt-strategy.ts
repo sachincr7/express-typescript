@@ -6,7 +6,7 @@ import {
 } from 'passport-jwt';
 import passport from 'passport';
 import { env } from '@/common/utils/envConfig';
-import { UserService } from '@/api/user/userService';
+import { userService } from '@/api/user/userService';
 
 const jwtOptions: StrategyOptions = {
   secretOrKey: env.JWT_SECRET,
@@ -18,6 +18,7 @@ interface JwtPayload {
   iat: number;
   email: string;
   role: string;
+  organization: string;
 }
 
 const jwtVerify = async (
@@ -25,14 +26,11 @@ const jwtVerify = async (
   done: VerifiedCallback
 ): Promise<void> => {
   try {
-    const userService = new UserService();
-    const userResponse = await userService.findById(Number(payload.sub));
-
-    if (!userResponse.success || !userResponse.data) {
+    if (!payload.organization) {
       return done(null, false);
     }
 
-    done(null, userResponse.data);
+    done(null, payload);
   } catch (error) {
     done(error, false);
   }
