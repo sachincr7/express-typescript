@@ -26,11 +26,12 @@ const jwtVerify = async (
   done: VerifiedCallback
 ): Promise<void> => {
   try {
-    if (!payload.organization) {
+    const user = await userService.findById(payload.sub);
+    if (!user) {
       return done(null, false);
     }
 
-    done(null, payload);
+    done(null, user);
   } catch (error) {
     done(error, false);
   }

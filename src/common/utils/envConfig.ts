@@ -22,6 +22,13 @@ const envSchema = z.object({
 
   JWT_SECRET: z.string().min(1).default('your-secret-key-change-in-production'),
 
+  JWT_ACCESS_EXPIRATION_MONTHS: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(1)
+    .describe('hours after which access tokens expire'),
+
   JWT_ACCESS_EXPIRATION_MINUTES: z.coerce
     .number()
     .int()

@@ -23,10 +23,10 @@ export const generateAccessToken = (
     role,
   };
 
+  console.log('env.JWT_SECRET', env.JWT_SECRET);
+
   return jwt.sign(payload, env.JWT_SECRET, {
-    expiresIn: `${env.JWT_ACCESS_EXPIRATION_MINUTES}m`,
-    issuer: 'express-typescript-app',
-    audience: 'express-typescript-users',
+    expiresIn: `${env.JWT_ACCESS_EXPIRATION_MONTHS}M`,
   });
 };
 

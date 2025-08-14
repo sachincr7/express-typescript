@@ -36,7 +36,7 @@ app.use(passport.initialize());
 
 // Routes
 app.use('/api/health-check', healthCheckRouter);
-app.use('/api/users', userRouter);
+app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/shopify', shopifyRouter);
 

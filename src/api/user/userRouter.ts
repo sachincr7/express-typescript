@@ -7,24 +7,21 @@ import { authenticateJWT } from '@/middlewares/auth';
 export const userRouter: Router = express.Router();
 
 /**
- * GET /users
- * @summary Retrieve all users
- * @description Fetches a list of all users in the system
- * @returns {User[]} Array of user objects
- */
-userRouter.get('/', userController.getUsers);
-
-/**
- * GET /users/:id
+ * GET /user/:id
  * @summary Retrieve a specific user by ID
  * @description Fetches a single user by their unique identifier
  * @param {number} id - The unique identifier of the user
  * @returns {User} The user object if found
  */
-userRouter.get('/:id', validateRequest(GetUserSchema), userController.getUser);
+userRouter.get(
+  '/:id',
+  validateRequest(GetUserSchema),
+  authenticateJWT,
+  userController.getUserById
+);
 
 /**
- * PUT /auth/users/:id
+ * PUT /user/users/:id
  * @summary Update a user
  * @description Updates an existing user's information
  * @param {number} id - The unique identifier of the user
@@ -32,31 +29,10 @@ userRouter.get('/:id', validateRequest(GetUserSchema), userController.getUser);
  * @returns {User} The updated user object
  */
 userRouter.put(
-  '/users/:id',
+  '/:id',
   validateRequest(UpdateUserSchema),
-  userController.updateUser
-);
-
-/**
- * GET /auth/users
- * @summary Retrieve all users
- * @description Fetches a list of all users with optional pagination
- * @returns {User[]} Array of user objects
- */
-userRouter.get('/users', userController.getUsers);
-
-/**
- * GET /auth/users/:id
- * @summary Retrieve a specific user by ID
- * @description Fetches a single user by their unique identifier
- * @param {number} id - The unique identifier of the user
- * @returns {User} The user object if found
- */
-userRouter.get(
-  '/users/:id',
-  validateRequest(GetUserSchema),
   authenticateJWT,
-  userController.getUserById
+  userController.updateUser
 );
 
 /**
@@ -66,26 +42,7 @@ userRouter.get(
  * @param {string} email - The email address of the user
  * @returns {User} The user object if found
  */
-userRouter.get(
-  '/users/email/:email',
-  authenticateJWT,
-  userController.getUserByEmail
-);
-
-/**
- * PUT /auth/users/:id
- * @summary Update a user
- * @description Updates an existing user's information
- * @param {number} id - The unique identifier of the user
- * @param {object} body - Updated user data
- * @returns {User} The updated user object
- */
-userRouter.put(
-  '/users/:id',
-  validateRequest(UpdateUserSchema),
-  authenticateJWT,
-  userController.updateUser
-);
+userRouter.get('/email/:email', authenticateJWT, userController.getUserByEmail);
 
 /**
  * DELETE /auth/users/:id
@@ -95,7 +52,7 @@ userRouter.put(
  * @returns {boolean} Success status
  */
 userRouter.delete(
-  '/users/:id',
+  '/:id',
   validateRequest(GetUserSchema),
   authenticateJWT,
   userController.deleteUser

@@ -1,5 +1,4 @@
 import type { Request, RequestHandler, Response } from 'express';
-import { userService } from '@/api/user/userService';
 import { authService } from './authService';
 import { User } from '@/drizzle/schema';
 

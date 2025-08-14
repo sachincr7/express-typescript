@@ -5,6 +5,7 @@ import { ServiceResponse } from '@/common/models/serviceResponse';
 import { logger } from '@/server';
 import { filterUserResponse, hashPassword } from '@/common/utils/passwordUtils';
 import { tokenService } from './tokenService';
+import { env } from '@/common/utils/envConfig';
 
 export class AuthService {
   private userRepository: UserRepository;
