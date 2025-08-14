@@ -35,6 +35,14 @@ export class AuthService {
         );
       }
 
+      if (!userBody.password) {
+        return ServiceResponse.failure(
+          'Password is required',
+          null,
+          StatusCodes.BAD_REQUEST
+        );
+      }
+
       // Hash password using bcrypt
       const hashedPassword = await hashPassword(userBody.password);
 
@@ -75,8 +83,13 @@ export class AuthService {
    * @param loginData - User login credentials
    * @returns Promise<ServiceResponse<{email: string, password: string} | null>>
    */
-  async loginUser(loginData: { email: string; password: string }) {
-    return ServiceResponse.success('User logged in successfully', loginData);
+  async loginUser(loginData: User) {
+    const authToken = await tokenService.generateToken(loginData);
+    const data = {
+      user: filterUserResponse(loginData),
+      token: authToken,
+    };
+    return ServiceResponse.success('User logged in successfully', data);
   }
 
   /**

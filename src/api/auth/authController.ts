@@ -1,6 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express';
 import { userService } from '@/api/user/userService';
 import { authService } from './authService';
+import { User } from '@/drizzle/schema';
 
 class AuthController {
   /**
@@ -17,7 +18,7 @@ class AuthController {
    * @param res - Response object
    */
   public loginUser: RequestHandler = async (req: Request, res: Response) => {
-    const serviceResponse = await authService.loginUser(req.body);
+    const serviceResponse = await authService.loginUser(req.user as User);
     res.status(serviceResponse.statusCode).send(serviceResponse);
   };
 
