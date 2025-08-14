@@ -22,10 +22,31 @@ export class UserRepository {
   }
 
   /**
+   * Finds a user by their organization
+   * @param organization - The organization to find a user by
+   * @returns The user if found, otherwise null
+   */
+  async findByOrganizationAsync(organization: string): Promise<User | null> {
+    const result = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.organization, organization));
+    return result[0] || null;
+  }
+
+  /**
    * Creates a new user in the database
    */
   async createAsync(userData: NewUser): Promise<User> {
-    const result = await db.insert(usersTable).values(userData).returning();
+    console.log(userData);
+    const result = await db
+      .insert(usersTable)
+      .values({
+        ...userData,
+        created_at: new Date(),
+        updated_at: new Date(),
+      })
+      .returning();
     return result[0];
   }
 

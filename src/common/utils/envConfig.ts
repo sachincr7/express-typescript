@@ -61,6 +61,12 @@ const envSchema = z.object({
     .string()
     .url()
     .describe('url to connect to the postgres database'),
+
+  SHOPIFY_API_KEY: z.string().min(1).describe('Shopify API key'),
+  SHOPIFY_API_SECRET: z.string().min(1).describe('Shopify API secret'),
+  SHOPIFY_API_SCOPES: z.string().min(1).describe('Shopify API scopes'),
+
+  FRONTEND_URL: z.string().url().describe('url to connect to the frontend'),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

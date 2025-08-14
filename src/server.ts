@@ -1,10 +1,12 @@
 import cors from 'cors';
+import '@shopify/shopify-api/adapters/node';
 import express, { type Express } from 'express';
 import helmet from 'helmet';
 import { pino } from 'pino';
 import { healthCheckRouter } from '@/api/healthCheck/healthCheckRouter';
 import { userRouter } from '@/api/user/userRouter';
 import { authRouter } from '@/api/auth/authRouter';
+import { shopifyRouter } from '@/api/shopify/shopifyRouter';
 import errorHandler from '@/common/middleware/errorHandler';
 import rateLimiter from '@/common/middleware/rateLimiter';
 import requestLogger from '@/common/middleware/requestLogger';
@@ -36,6 +38,7 @@ app.use(passport.initialize());
 app.use('/api/health-check', healthCheckRouter);
 app.use('/api/users', userRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/shopify', shopifyRouter);
 
 // Swagger UI
 // app.use(openAPIRouter);

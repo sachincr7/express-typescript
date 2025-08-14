@@ -27,6 +27,9 @@ export const CreateUserSchema = z.object({
     last_name: z.string().min(1).max(255),
     email: z.string().email().max(255),
     password: z.string().min(8).max(255),
+    organization: z.string().min(1).max(255).optional(),
+    role: z.string().min(1).max(255).optional(),
+    email_verified_at: z.date().optional(),
   }),
 });
 

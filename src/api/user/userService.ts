@@ -20,7 +20,7 @@ export class UserService {
    * @returns Promise<ServiceResponse<User | null>>
    */
   async createUser(
-    userBody: Omit<NewUser, 'id' | 'createdAt' | 'updatedAt'>
+    userBody: Omit<NewUser, 'id' | 'created_at' | 'updated_at'>
   ): Promise<ServiceResponse<User | null>> {
     try {
       const user = await this.userRepository.createAsync(userBody);
@@ -132,6 +132,38 @@ export class UserService {
       return ServiceResponse.success('User found', user);
     } catch (ex) {
       const errorMessage = `Error finding user with email ${email}: ${
+        (ex as Error).message
+      }`;
+      logger.error(errorMessage);
+      return ServiceResponse.failure(
+        'An error occurred while finding user.',
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  /**
+   * Finds a user by their organization
+   * @param organization - The organization to find a user by
+   * @returns The user if found, otherwise null
+   */
+  async findByOrganization(organization: string) {
+    try {
+      const user = await this.userRepository.findByOrganizationAsync(
+        organization
+      );
+      if (!user) {
+        return ServiceResponse.failure(
+          'User not found',
+          null,
+          StatusCodes.NOT_FOUND
+        );
+      }
+
+      return ServiceResponse.success('User found', user);
+    } catch (ex) {
+      const errorMessage = `Error finding user with organization ${organization}: ${
         (ex as Error).message
       }`;
       logger.error(errorMessage);

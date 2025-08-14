@@ -29,6 +29,20 @@
       "when": 1755159077323,
       "tag": "0003_flashy_master_chief",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1755162792502,
+      "tag": "0004_shiny_proudstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1755165180302,
+      "tag": "0005_fancy_mentor",
+      "breakpoints": true
     }
   ]
 }

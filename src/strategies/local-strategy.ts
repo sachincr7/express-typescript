@@ -1,8 +1,10 @@
 import { Strategy as LocalStrategy } from 'passport-local';
 import passport from 'passport';
+
 import { userService } from '@/api/user/userService';
 import { comparePassword } from '@/common/utils/passwordUtils';
-import { User } from '@/drizzle/schema';
+import type { User } from '@/drizzle/schema';
+import { logger } from '@/server';
 
 export default passport.use(
   new LocalStrategy(

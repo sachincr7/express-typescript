@@ -11,7 +11,13 @@ class TokenService {
       email: user.email,
       role: user.role,
     };
-    return jwt.sign(payload, env.JWT_SECRET);
+    return jwt.sign(payload, env.JWT_SECRET, {
+      expiresIn: '30d',
+    });
+  }
+
+  async verifyAccessToken(token: string) {
+    return jwt.verify(token, env.JWT_SECRET);
   }
 }
 
