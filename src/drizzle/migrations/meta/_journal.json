@@ -43,6 +43,13 @@
       "when": 1755165180302,
       "tag": "0005_fancy_mentor",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1755178129061,
+      "tag": "0006_brave_madrox",
+      "breakpoints": true
     }
   ]
 }

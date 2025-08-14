@@ -30,6 +30,14 @@ export const shopifySessionsTable = pgTable('shopify_sessions', {
   accesstoken: varchar('accesstoken', { length: 255 }),
 });
 
+export const productsTable = pgTable('products', {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  name: varchar({ length: 255 }).notNull(),
+  description: varchar({ length: 255 }),
+  price: integer().notNull(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+});
+
 export type ShopifySession = typeof shopifySessionsTable.$inferSelect;
 export type NewShopifySession = typeof shopifySessionsTable.$inferInsert;
 export type User = typeof usersTable.$inferSelect;

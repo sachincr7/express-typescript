@@ -45,6 +45,20 @@ class UserController {
   };
 
   /**
+   * Get user by organization
+   * @param req - Request object
+   * @param res - Response object
+   */
+  public getUserByOrganization: RequestHandler = async (
+    req: Request,
+    res: Response
+  ) => {
+    const { organization } = req.params;
+    const serviceResponse = await userService.findByOrganization(organization);
+    res.status(serviceResponse.statusCode).send(serviceResponse);
+  };
+
+  /**
    * Get user by email
    * @param req - Request object
    * @param res - Response object

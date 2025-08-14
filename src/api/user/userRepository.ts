@@ -80,10 +80,9 @@ export class UserRepository {
    * Finds a user by email address
    */
   async findByEmailAsync(email: string): Promise<User | null> {
-    const result = await db
-      .select()
-      .from(usersTable)
-      .where(eq(usersTable.email, email));
-    return result[0] || null;
+    const result = await db.query.usersTable.findFirst({
+      where: eq(usersTable.email, email),
+    });
+    return result || null;
   }
 }
