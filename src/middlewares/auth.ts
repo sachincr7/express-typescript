@@ -11,10 +11,6 @@ export const authenticateJWT = (
     'jwt',
     { session: false },
     (err: Error, user: User, info: any) => {
-      console.log('user', user);
-      console.log('info', info);
-      console.log('err', err);
-
       if (err) return next(err);
 
       if (!user) {

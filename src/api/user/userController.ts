@@ -1,6 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express';
 
 import { userService } from '@/api/user/userService';
+import { User } from './userModel';
 
 class UserController {
   /**
@@ -9,38 +10,8 @@ class UserController {
    * @param res - Response object
    */
   public getUser: RequestHandler = async (req: Request, res: Response) => {
-    const id = Number.parseInt(req.params.id as string, 10);
-    const serviceResponse = await userService.findById(id);
-    res.status(serviceResponse.statusCode).send(serviceResponse);
-  };
-
-  /**
-   * Get all users with optional pagination
-   * @param req - Request object
-   * @param res - Response object
-   */
-  public getUsers: RequestHandler = async (req: Request, res: Response) => {
-    const { limit, offset, sortBy, sortOrder } = req.query;
-
-    const options = {
-      limit: limit ? Number(limit) : undefined,
-      offset: offset ? Number(offset) : undefined,
-      sortBy: sortBy as string,
-      sortOrder: (sortOrder as 'asc' | 'desc') || 'asc',
-    };
-
-    const serviceResponse = await userService.queryUsers(options);
-    res.status(serviceResponse.statusCode).send(serviceResponse);
-  };
-
-  /**
-   * Get user by ID
-   * @param req - Request object
-   * @param res - Response object
-   */
-  public getUserById: RequestHandler = async (req: Request, res: Response) => {
-    const id = Number.parseInt(req.params.id as string, 10);
-    const serviceResponse = await userService.findById(id);
+    const user = req.user as User;
+    const serviceResponse = await userService.findById(user.id);
     res.status(serviceResponse.statusCode).send(serviceResponse);
   };
 
@@ -53,8 +24,10 @@ class UserController {
     req: Request,
     res: Response
   ) => {
-    const { organization } = req.params;
-    const serviceResponse = await userService.findByOrganization(organization);
+    const user = req.user as User;
+    const serviceResponse = await userService.findByOrganization(
+      user.organization
+    );
     res.status(serviceResponse.statusCode).send(serviceResponse);
   };
 

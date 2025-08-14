@@ -13,12 +13,7 @@ export const userRouter: Router = express.Router();
  * @param {number} id - The unique identifier of the user
  * @returns {User} The user object if found
  */
-userRouter.get(
-  '/:id',
-  validateRequest(GetUserSchema),
-  authenticateJWT,
-  userController.getUserById
-);
+userRouter.get('/details', authenticateJWT, userController.getUser);
 
 /**
  * PUT /user/users/:id
@@ -29,7 +24,7 @@ userRouter.get(
  * @returns {User} The updated user object
  */
 userRouter.put(
-  '/:id',
+  '/update',
   validateRequest(UpdateUserSchema),
   authenticateJWT,
   userController.updateUser
@@ -52,7 +47,7 @@ userRouter.get('/email/:email', authenticateJWT, userController.getUserByEmail);
  * @returns {boolean} Success status
  */
 userRouter.delete(
-  '/:id',
+  '/delete',
   validateRequest(GetUserSchema),
   authenticateJWT,
   userController.deleteUser
