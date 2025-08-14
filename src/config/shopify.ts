@@ -11,7 +11,7 @@ const shopify = shopifyApi({
   hostName: env.HOST.replace(/https:\/\//, ''),
   hostScheme: 'https',
   apiVersion: LATEST_API_VERSION,
-  isEmbeddedApp: true,
+  isEmbeddedApp: false,
   logger: { level: isDev ? 3 : 0 }, //Error = 0,Warning = 1,Info = 2,Debug = 3,
 });
 

@@ -19,14 +19,15 @@ class ShopifyTokensController {
       const { session } = callbackResponse;
 
       const sessionData: NewShopifySession = {
-        id: `${session.shop}_${Date.now()}`,
+        id: session.id,
         shop: session.shop,
         state: session.state,
-        isonline: true,
+        isonline: false,
         scope: session.scope,
         expires: session.expires
           ? Math.floor(session.expires.getTime() / 1000)
           : null,
+        accesstoken: session.accessToken,
       };
       await shopifySessionService.storeSession(sessionData);
 
@@ -37,7 +38,7 @@ class ShopifyTokensController {
       return await shopify.auth.begin({
         shop: session.shop,
         callbackPath: '/api/shopify/auth/callback',
-        isOnline: true,
+        isOnline: false,
         rawRequest: req,
         rawResponse: res,
       });

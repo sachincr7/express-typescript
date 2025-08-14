@@ -14,10 +14,33 @@ export class ShopifySessionService {
   /**
    * Store a Shopify session
    */
-  async storeSession(
-    sessionData: NewShopifySession
-  ): Promise<ServiceResponse<ShopifySession | null>> {
+  async storeSession(sessionData: NewShopifySession) {
     try {
+      const loadedSession = await db
+        .select()
+        .from(shopifySessionsTable)
+        .where(eq(shopifySessionsTable.id, sessionData.id));
+
+      if (loadedSession.length) {
+        const updatedSession = await db
+          .update(shopifySessionsTable)
+          .set({
+            accesstoken: sessionData.accesstoken,
+            scope: sessionData.scope,
+            shop: sessionData.shop,
+            expires: sessionData.expires,
+            state: sessionData.state,
+          })
+          .where(eq(shopifySessionsTable.id, sessionData.id))
+          .returning();
+
+        return ServiceResponse.success(
+          'Session already exists',
+          updatedSession[0],
+          StatusCodes.OK
+        );
+      }
+
       const result = await db
         .insert(shopifySessionsTable)
         .values(sessionData)
